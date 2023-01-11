@@ -1,0 +1,20 @@
+{{> head }}
+
+<div class="episodes">
+    <ul>
+        {{#episodes}}
+            <li class="episode">
+                <div class="title">
+                    <a href="/episode/{{code}}">
+                        <span class="code tag">{{code}}</span>
+                        <span class="name">{{name}}</span></a>
+                </div>
+                <div>
+                    <span class="airedAt">{{airedAt}}</span>
+                    <div class="topics">{{#topics}}<span class="topic">{{name}}</span>{{/topics}}</div>
+                </div>
+            </li>
+        {{/episodes}}
+    </ul>
+</div>
+{{> footer }}

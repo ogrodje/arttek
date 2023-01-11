@@ -1,0 +1,39 @@
+{{> head }}
+
+<div class="episode">
+    <h1>
+        <span class="code tag">{{episode.code}}</span>
+        {{episode.name}}
+    </h1>
+    <div class="tools">
+        <a href="/episodes">&laquo; Nazaj</a>
+    </div>
+    <div>
+        <div class="details">
+            <span class="airedAt">{{episode.airedAt}}</span>
+
+            <div class="people">
+                <ul>
+                    {{#episode.guests}}
+                        <li class="person guest">
+                            <img src="{{avatar.url}}"/>{{fullName}}</li>{{/episode.guests}}
+                    <li class="person host">
+                        <img src="{{episode.host.avatar.url}}"/>
+                        {{episode.host.fullName}}
+                    </li>
+                    {{#episode.cohosts}}
+                        <li class="person cohost">
+                            <img src="{{avatar.url}}"/>
+                            {{fullName}}</li>{{/episode.cohosts}}
+
+                </ul>
+            </div>
+
+        </div>
+        <div class="summary">
+            {{{episodeSummary}}}
+        </div>
+    </div>
+</div>
+
+{{> footer }}
