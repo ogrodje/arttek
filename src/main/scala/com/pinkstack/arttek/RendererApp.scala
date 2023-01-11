@@ -1,4 +1,5 @@
 package com.pinkstack.arttek
+import com.pinkstack.arttek.OgrodjeClient.{getEpisode, getEpisodes}
 import io.circe.{DecodingFailure, Json}
 import io.circe.Json.{fromFields as jsonFromFields, fromString as jsonFromString}
 import zio.*
@@ -12,7 +13,6 @@ import zio.stream.{ZPipeline, ZStream}
 
 import java.io.StringWriter
 import java.util
-// import liqp.Template
 import zio.http.model.Status.Ok
 import io.circe.*
 import io.circe.generic.semiauto.*
@@ -24,40 +24,24 @@ import com.github.mustachejava.{DefaultMustacheFactory, Mustache, MustacheFactor
 object RendererApp extends ZIOAppDefault:
   import SERDE.*
 
-  def getEpisode(code: String): ZIO[AppConfig & Client, Throwable, (Episode, String)] =
-    for
-      episode        <- OgrodjeClient
-        .episode(code)
-        .flatMap(j => fromOption(j.hcursor.downField("episode").focus))
-        .flatMap(j => fromEither(j.as[SERDE.Episode]))
-        .catchAll(th => ZIO.fail(new RuntimeException(th.toString)))
-      episodeSummary <- Render.renderMarkdown(episode.summary)
-    yield (episode, episodeSummary)
-
-  def getEpisodes: ZIO[AppConfig & Client, Throwable, Array[Episode]] =
-    OgrodjeClient.episodes
-      .flatMap(j => fromOption(j.hcursor.downField("episodes").focus))
-      .flatMap(j => fromEither(j.as[Array[SERDE.Episode]]))
-      .catchAll(th => ZIO.fail(new RuntimeException(th.toString)))
-
   val app: HttpApp[AppConfig & Client, Throwable] =
     Http
       .collectHttp[Request] { case Method.GET -> !! / "raw" / name =>
         Http.fromStream(ZStream.fromFile(Paths.get("./templates/ogrodje-white-logo.png").toFile))
       } ++ Http.collectZIO[Request] {
-      case Method.GET -> !! / "episode" / code       =>
+      case Method.GET -> !! / "episode" / code    =>
         getEpisode(code).flatMap { case (episode, episodeSummary) =>
           Render.render("episode.mustache", "episode" -> episode, "episodeSummary" -> episodeSummary)
         }
-      case Method.GET -> !! / "episode-video" / code =>
+      case Method.GET -> !! / templateName / code =>
         getEpisode(code).flatMap { case (episode, episodeSummary) =>
-          Render.render("episode-video.mustache", "episode" -> episode, "episodeSummary" -> episodeSummary)
+          Render.render(s"${templateName}.mustache", "episode" -> episode, "episodeSummary" -> episodeSummary)
         }
-      case Method.GET -> !! / "episodes"             =>
+      case Method.GET -> !! / "episodes"          =>
         getEpisodes.flatMap { episodes =>
           Render.render("episodes.mustache", "episodes" -> episodes)
         }
-      case _                                         =>
+      case _                                      =>
         ZIO.succeed(Response.text("404"))
     }
 
@@ -71,5 +55,3 @@ object RendererApp extends ZIOAppDefault:
       Console.printLine(s"Started server on port: $port")
     } *> ZIO.never)
       .provide(Scope.default, Client.default, ZLayer.fromZIO(AppConfig.load), configLayer, Server.live)
-    // Server.install(app).provide(ServerConfig.live(config), Server.live)
-  // app.provide(Scope.default, Client.default, ZLayer.fromZIO(AppConfig.load))

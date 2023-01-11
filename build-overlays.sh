@@ -2,7 +2,7 @@
 set -ex
 rm -rf tmp/*.html overlays/*.png
 
-for episode in $(seq -w 14 19); do
+for episode in $(seq -w 1 19); do
   code="S01E$episode"
   echo "code $code"
   wget http://localhost:7777/episode-video/$code -O tmp/$code.html
