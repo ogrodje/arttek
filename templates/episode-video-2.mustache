@@ -2,131 +2,35 @@
 <head>
     <meta charset="utf-8">
     <title>Ogrodje</title>
-    <style>
-        html, body {
-            font-size: 50pt;
-            font-family: Iosevka, "Iosevka", sans-serif;
-            background-color: black;
-        }
-
-        .screen {
-            display: block;
-            box-sizing: border-box;
-            width: 1205px;
-            vertical-align: top;
-            float: none;
-            clear: both;
-            height: auto;
-        }
-
-        .screen .box {
-            display: inline-block;
-            width: 300px;
-            height: 300px;
-            border: 1px solid white;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            vertical-align: top;
-            float: left;
-            overflow: hidden;
-        }
-
-        .screen .box-wide {
-            width: calc(300px*2);
-        }
-
-        .box .line {
-            width: calc(300px*1.41);
-            border-bottom: 1px solid white;
-            transform: rotate(45deg);
-            transform-origin: left;
-        }
-
-        .box .pbox {
-
-        }
-
-        .box .person {
-            position: relative;
-        }
-
-        .box .person .frame {
-            position: absolute;
-            left: 0;
-            top: 0;
-        }
-
-        .box img {
-            width: 100px;
-        }
-
-        .box .person .fullName{
-            display: none;
-        }
-
-
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" href="http://localhost:7777/css/episode-video-2">
 </head>
 <body>
-<div class="container">
-
-    <div class="screen">
-        <div class="box empty">
-            <div class="line"></div>
-        </div>
-        <div class="box box-wide logo"></div>
-        <div class="box empty">
-            <div class="line"></div>
-        </div>
-        <div class="box pbox">
-            <div class="person">
-                <div class="frame"><img src="{{episode.host.avatar.url}}"/></div>
-                <div class="fullName">{{episode.host.fullName}}</div>
+<div class="container-x">
+    <div class="row">
+        <div class="col">
+            <div class="master">
+                <div class="logo">
+                    <img src="http://localhost:7777/raw/ogrodje-white-logo.png"/>
+                </div>
+                <div class="title">{{ episode.name }}</div>
             </div>
         </div>
-        {{#episode.cohosts}}
-            <div class="box pbox">
-                <div class="person">
-                    <div class="frame"><img src="{{avatar.url}}"/></div>
-                    <div class="fullName">{{fullName}}</div>
-                </div>
-            </div>{{/episode.cohosts}}
-        {{#episode.guests}}
-            <div class="box pbox">
-                <div class="person">
-                    <div class="frame"><img src="{{avatar.url}}"/></div>
-                    <div class="fullName">{{fullName}}</div>
-                </div>
+        <div class="col">
+            <div class="people">
+                {{#people}}
+                    {{#has}}
+                        <div class="box">
+                            <div class="frame"><img src="{{person.avatar.url}}"/></div>
+                            <div class="fullName">{{person.fullName}}</div>
+                        </div>
+                    {{/has}}
+                    {{^has}}
+                        <div class="box"></div>
+                    {{/has}}
+                {{/people}}
             </div>
-        {{/episode.guests}}
-        <div class="box empty">
-            <div class="line"></div>
         </div>
     </div>
-
-    <!--
-    <div class="logo">
-        <img src="http://localhost:7777/raw/ogrodje-white-logo.png"/>
-    </div>
-    <div class="people">
-        <ul>
-            <li class="person host">
-                <div class="frame"><img src="{{episode.host.avatar.url}}"/></div>
-                <div class="fullName">{{episode.host.fullName}}</div>
-            </li>
-            {{#episode.cohosts}}
-                <li class="person cohost">
-                    <div class="frame"><img src="{{avatar.url}}"/></div>
-                    <div class="fullName">{{fullName}}</div>
-                </li>{{/episode.cohosts}}
-        {{#episode.guests}}
-                <li class="person guest">
-                    <div class="frame"><img src="{{avatar.url}}"/></div>
-                    <div class="fullName">{{fullName}}</div>
-                </li>
-            {{/episode.guests}}
-        </ul>
-    </div> -->
 </div>
 </body>

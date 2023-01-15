@@ -8,9 +8,10 @@ fi
 
 sound_source=$(find ~/Dropbox/Ogrodje/final-recordings -name "*$code*" -type f)
 sound_source=$(echo "$sound_source" | sed 's/ /\\\ /g')
-# sound_source="$(pwd)/video-content/sound.wav"
+sound_source="$(pwd)/video-content/sound.wav"
 overlay_file="$(find overlays/ -name "*$code*" -type f)"
 video_background="$(pwd)/video-content/backgrond-24.mov"
+video_background="$(pwd)/video-content/vibe.mov"
 
 echo "sound_source: $sound_source"
 echo "overlay_file: $overlay_file"
@@ -63,14 +64,35 @@ echo "--- encoding ---"
 #   -vcodec libx264 \
 #   -y $code.mp4
 
+# this works
+# ffmpeg -stream_loop -1 -i ${video_background} \
+#     -i ${sound_source} \
+#     -i ${overlay_file} \
+#     -filter_complex \
+#     "overlay=50:50" \
+#     -vcodec libx264 \
+#     -map 0:v:0 \
+#     -map 1:a:0 \
+#     -shortest \
+#     -y $code.mp4
 
 ffmpeg -stream_loop -1 -i ${video_background} \
     -i ${sound_source} \
     -i ${overlay_file} \
     -filter_complex \
-    "overlay=50:50" \
-    -vcodec libx264 \
+    "overlay=((main_w-overlay_w)/2)-10:(main_h-overlay_h)/2" \
     -map 0:v:0 \
     -map 1:a:0 \
+    -vcodec libx264 \
+    -profile:v high \
+    -preset slow \
+    -movflags +faststart \
+    -bf 2	\
+    -crf 18 \
+    -g 30	\
+    -pix_fmt yuv420p \
     -shortest \
     -y $code.mp4
+
+# Resources:
+# https://gist.github.com/mikoim/27e4e0dc64e384adbcb91ff10a2d3678

@@ -1,0 +1,143 @@
+$jsass-void: null;
+$font-size: 18pt;
+$brick-weight: 300px;
+$frame-padding: 10px;
+$border-width: 4px;
+
+* {
+  box-sizing: border-box;
+}
+
+html, body {
+  font-size: $font-size;
+  line-height: $font-size * 1.2;
+  font-family: Iosevka, "Iosevka", sans-serif;
+  color: white;
+}
+
+.container-x {
+  border: $border-width solid white;
+  width: $brick-weight * 4 + $border-width;
+  overflow: hidden;
+  border-right: none;
+}
+
+.row {
+  width: 100%;
+  position: relative;
+  border-spacing: 0;
+  padding: 0;
+  margin: 0;
+  display: table;
+
+  .col {
+    width: 49%;
+    display: table-cell;
+    border-spacing: 0;
+    padding: 0;
+    margin: 0;
+    vertical-align: top;
+
+    .master {
+      position: relative;
+      display: block;
+      height: $brick-weight * 2;
+
+      .logo {
+        padding: 40px;
+        width: 300px;
+        padding-top: 0;
+
+        img {
+          width: 200px;
+        }
+      }
+
+      .title {
+        position: absolute;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        display: inline-block;
+
+        font-weight: bold;
+        font-size: $font-size * 1.8;
+        line-height: $font-size * 2.3;
+        padding: 40px;
+      }
+    }
+  }
+}
+
+.people {
+  position: relative;
+  display: block;
+  clear: both;
+  float: none;
+
+  .box {
+    position: relative;
+    width: $brick-weight;
+    height: $brick-weight;
+    float: left;
+    border: $border-width solid white;
+    border-bottom: none;
+    overflow: hidden;
+
+    &:nth-child(1),
+    &:nth-child(2) {
+      border-top: none;
+    }
+
+    &:nth-child(2),
+    &:nth-child(4) {
+      border-left: none;
+    }
+
+    &:empty:after {
+      position: absolute;
+      content: "";
+      quotes: none;
+      width: $brick-weight * 1.412;
+      border: none;
+      border-bottom: $border-width solid white;
+
+      transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      -moz-transform: rotate(45deg);
+      -o-transform: rotate(45deg);
+      transform-origin: left;
+      -webkit-transform-origin: left;
+
+    }
+
+    .fullName {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      display: inline-block;
+      background-color: #e92639;
+      padding: 15px;
+      padding-top: 10px;
+      padding-bottom: 10px;
+      font-size: $font-size;
+    }
+
+    .frame {
+      display: block;
+      position: relative;
+      width: $brick-weight;
+      height: $border-width;
+
+      img {
+        display: block;
+        position: relative;
+        width: $brick-weight + 2px;
+        height: $brick-weight+ 2px;
+        object-position: center center;
+        object-fit: cover;
+        vertical-align: top;
+      }
+    }
+  }
+}

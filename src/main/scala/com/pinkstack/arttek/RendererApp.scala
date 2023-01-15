@@ -29,17 +29,30 @@ object RendererApp extends ZIOAppDefault:
       .collectHttp[Request] { case Method.GET -> !! / "raw" / name =>
         Http.fromStream(ZStream.fromFile(Paths.get("./templates/ogrodje-white-logo.png").toFile))
       } ++ Http.collectZIO[Request] {
+      case Method.GET -> !! / "css" / fileName    =>
+        Renderer.renderSASS(fileName)
+          .catchAll(th => succeed(Response.text(th.getMessage)))
       case Method.GET -> !! / "episode" / code    =>
-        getEpisode(code).flatMap { case (episode, episodeSummary) =>
-          Render.render("episode.mustache", "episode" -> episode, "episodeSummary" -> episodeSummary)
+        getEpisode(code).flatMap { case (episode, episodeSummary, people) =>
+          Renderer.renderMustache(
+            "episode.mustache",
+            "episode"        -> episode,
+            "episodeSummary" -> episodeSummary,
+            "people"         -> people
+          )
         }
       case Method.GET -> !! / templateName / code =>
-        getEpisode(code).flatMap { case (episode, episodeSummary) =>
-          Render.render(s"${templateName}.mustache", "episode" -> episode, "episodeSummary" -> episodeSummary)
+        getEpisode(code).flatMap { case (episode, episodeSummary, people) =>
+          Renderer.renderMustache(
+            s"${templateName}.mustache",
+            "episode"        -> episode,
+            "episodeSummary" -> episodeSummary,
+            "people"         -> people
+          )
         }
       case Method.GET -> !! / "episodes"          =>
         getEpisodes.flatMap { episodes =>
-          Render.render("episodes.mustache", "episodes" -> episodes)
+          Renderer.renderMustache("episodes.mustache", "episodes" -> episodes)
         }
       case _                                      =>
         ZIO.succeed(Response.text("404"))

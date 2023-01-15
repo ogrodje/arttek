@@ -54,6 +54,10 @@ object Dependencies {
     "org.commonmark" % "commonmark" % "0.21.0"
   )
 
+  lazy val sass: Modules = Seq(
+    "io.bit3" % "jsass" % "5.10.5"
+  )
+
   lazy val libOs: Modules = Seq(
     "com.lihaoyi" %% "os-lib" % "0.8.1"
   )
