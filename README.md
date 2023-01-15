@@ -31,7 +31,7 @@ java -jar target/*/arttek.jar --help
 
 This project was designed to work with Ogrodje podcast and its specifics. Some of the things are hard-coded; 
 however with minimum support a lot of the things can be made more generic and reusable. 
-Good start is to look into [templates](templates/) folder and start customisation there. 
+Good start is to look into [templates](templates/) and [sass](sass/) folders and start customisation there. 
 To change or optimise GraphQL queries look into [OgrodjeClient.scala](src/main/scala/com/pinkstack/arttek/OgrodjeClient.scala)
 
 
