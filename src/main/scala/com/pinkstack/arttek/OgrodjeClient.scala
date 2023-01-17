@@ -79,9 +79,9 @@ object OgrodjeClient extends HYGraphClient:
       )
     )
 
-  final case class HasPerson(person: Person, has: Boolean = true)
+  final case class HasPerson(person: PersonWithPicture, has: Boolean = true)
   object HasPerson:
-    val empty: HasPerson = HasPerson(SERDE.Person("none", Avatar.apply("none")), false)
+    val empty: HasPerson = HasPerson(PersonWithPicture(SERDE.Person("none", Avatar.apply("none"))), false)
 
   def getEpisode(code: String): ZIO[AppConfig & Client, Throwable, (Episode, String, Array[HasPerson])] =
     for
@@ -91,7 +91,7 @@ object OgrodjeClient extends HYGraphClient:
         .catchAll(th => ZIO.fail(new RuntimeException(th.toString)))
       episodeSummary <- Renderer.renderMarkdown(episode.summary)
       guests         <- ZIO.succeed {
-        (episode.guests ++ episode.cohosts).map(p => HasPerson(p))
+        (episode.guests ++ episode.cohosts).map(p => HasPerson(PersonWithPicture(p)))
       }
       preGap         <- ZIO.succeed {
         Map(0 -> 3, 1 -> 1, 2 -> 1, 3 -> 0)
@@ -103,8 +103,12 @@ object OgrodjeClient extends HYGraphClient:
       }
 
       people <- ZIO.succeed {
-        Array(HasPerson(episode.host)) ++ Array.fill(preGap)(HasPerson.empty) ++ guests ++
-          Array.fill(postGap)(HasPerson.empty)
+        (Array(HasPerson(PersonWithPicture(episode.host))) ++ Array.fill(preGap)(HasPerson.empty) ++ guests ++
+          Array.fill(postGap)(HasPerson.empty)).map {
+          case hp @ HasPerson(pp, true) =>
+            hp.copy(person = pp.copy(picture = pp.person.avatar.url.split("/").last))
+          case p                        => p
+        }
       }
     yield (episode, episodeSummary, people)
 

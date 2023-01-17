@@ -4,6 +4,13 @@
 *.mp3
 *.mov
 
+yt-avatars/*
+!yt-avatars/.keep
+
+
+video-output/*
+!video-output/.keep
+
 video-content/*
 !video-content/.keep
 

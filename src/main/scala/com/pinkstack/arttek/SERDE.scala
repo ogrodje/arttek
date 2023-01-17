@@ -12,6 +12,8 @@ object SERDE:
   implicit val personDecoder: Decoder[Person] = deriveDecoder[Person]
   implicit val personEncoder: Encoder[Person] = deriveEncoder[Person]
 
+  final case class PersonWithPicture(person: Person, picture: String = "")
+
   final case class Topic(name: String)
   implicit val topicDecoder: Decoder[Topic] = deriveDecoder[Topic]
   implicit val topicEncoder: Encoder[Topic] = deriveEncoder[Topic]

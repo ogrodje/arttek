@@ -6,12 +6,11 @@ if [[ -z "$code" ]]; then
     exit 1
 fi
 
-sound_source=$(find ~/Dropbox/Ogrodje/final-recordings -name "*$code*" -type f)
+sound_source=$(find ./input-audio -name "*$code*" -type f)
 sound_source=$(echo "$sound_source" | sed 's/ /\\\ /g')
 # sound_source="$(pwd)/video-content/sound.wav"
-overlay_file="$(find overlays/ -name "*$code*" -type f)"
-video_background="$(pwd)/video-content/backgrond-24.mov"
-video_background="$(pwd)/video-content/vibe.mov"
+overlay_file="$(find ./input-overlays -name "*$code*" -type f)"
+video_background="$(pwd)/input-animation/vibe.mov"
 
 echo "sound_source: $sound_source"
 echo "overlay_file: $overlay_file"
@@ -19,7 +18,6 @@ echo "video_background: $video_background"
 echo "--- encoding ---"
 
 ffmpeg \
-    -hwaccel videotoolbox \
     -hide_banner \
     -stream_loop -1 -i ${video_background} \
     -i ${sound_source} \
@@ -38,7 +36,4 @@ ffmpeg \
     -pix_fmt yuv420p \
     -c:a aac -profile:a aac_low -b:a 384k \
     -shortest \
-    -y video-output/$code.mp4
-
-# Resources:
-# https://gist.github.com/mikoim/27e4e0dc64e384adbcb91ff10a2d3678
+    -y output-video/$code.mp4

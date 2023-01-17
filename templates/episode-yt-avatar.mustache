@@ -5,10 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="http://localhost:7777/css/episode-video-2">
 </head>
-<body>
-<div class="container-x">
+<body class="yt">
+<div class="container-x yt">
     <div class="row">
-        <div class="col">
+        <div class="col left">
             <div class="master">
                 <div class="logo">
                     <img src="http://localhost:7777/raw/ogrodje-white-logo.png"/>
@@ -16,12 +16,12 @@
                 <div class="title">{{ episode.name }}</div>
             </div>
         </div>
-        <div class="col">
+        <div class="col right">
             <div class="people">
                 {{#people}}
                     {{#has}}
                         <div class="box">
-                            <div class="frame"><img src="https://media.graphassets.com/output=format:jpg/resize=width:700,height:700,fit:crop/{{person.picture}}"/></div>
+                            <div class="frame"><img src="https://media.graphassets.com/output=format:jpg/resize=width:800,height:800,fit:crop/{{person.picture}}"/></div>
                             <div class="fullName">{{person.person.fullName}}</div>
                         </div>
                     {{/has}}

@@ -30,7 +30,8 @@ object RendererApp extends ZIOAppDefault:
         Http.fromStream(ZStream.fromFile(Paths.get("./templates/ogrodje-white-logo.png").toFile))
       } ++ Http.collectZIO[Request] {
       case Method.GET -> !! / "css" / fileName    =>
-        Renderer.renderSASS(fileName)
+        Renderer
+          .renderSASS(fileName)
           .catchAll(th => succeed(Response.text(th.getMessage)))
       case Method.GET -> !! / "episode" / code    =>
         getEpisode(code).flatMap { case (episode, episodeSummary, people) =>
@@ -49,7 +50,7 @@ object RendererApp extends ZIOAppDefault:
             "episodeSummary" -> episodeSummary,
             "people"         -> people
           )
-        }
+        }.catchAll(th => succeed(Response.text(th.getMessage)))
       case Method.GET -> !! / "episodes"          =>
         getEpisodes.flatMap { episodes =>
           Renderer.renderMustache("episodes.mustache", "episodes" -> episodes)

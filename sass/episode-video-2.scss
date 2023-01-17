@@ -1,6 +1,8 @@
 $jsass-void: null;
 $font-size: 18pt;
 $brick-weight: 300px;
+$yt-brick-weight: 360px;
+
 $frame-padding: 10px;
 $border-width: 4px;
 
@@ -8,11 +10,23 @@ $border-width: 4px;
   box-sizing: border-box;
 }
 
+/*
+1280 pixels by 720
+*/
+
+
 html, body {
   font-size: $font-size;
   line-height: $font-size * 1.2;
   font-family: Iosevka, "Iosevka", sans-serif;
   color: white;
+
+  /* background-color: black; */
+
+  &.yt {
+    margin: 0;
+    padding: 0;
+  }
 }
 
 .container-x {
@@ -20,6 +34,15 @@ html, body {
   width: $brick-weight * 4 + $border-width;
   overflow: hidden;
   border-right: none;
+
+  &.yt {
+    display: block;
+    width: 1280px;
+    height: 720px;
+    overflow: hidden;
+    border: none;
+    background-color: black;
+  }
 }
 
 .row {
@@ -59,7 +82,6 @@ html, body {
         right: 0px;
         bottom: 0px;
         display: inline-block;
-
         font-weight: bold;
         font-size: $font-size * 1.8;
         line-height: $font-size * 2.3;
@@ -108,7 +130,6 @@ html, body {
       -o-transform: rotate(45deg);
       transform-origin: left;
       -webkit-transform-origin: left;
-
     }
 
     .fullName {
@@ -133,10 +154,95 @@ html, body {
         display: block;
         position: relative;
         width: $brick-weight + 2px;
-        height: $brick-weight+ 2px;
+        height: $brick-weight + 2px;
         object-position: center center;
         object-fit: cover;
         vertical-align: top;
+      }
+    }
+  }
+}
+
+
+.yt {
+  .row {
+    .col {
+      &.left {
+        width: $yt-brick-weight * 2;
+      }
+
+      &.right {
+        /* width: $yt-brick-weight * 2 + 5px; */
+        width: 944px;
+      }
+
+      .master {
+        height: $yt-brick-weight * 2;
+
+        .logo {
+          padding: 45px;
+          width: 300px;
+          padding-top: 0;
+
+          img {
+            width: 300px;
+          }
+        }
+
+        .title {
+          font-size: $font-size * 2.5;
+          line-height: $font-size * 3.2;
+          padding: 45px;
+          padding-bottom: 60px;
+        }
+      }
+    }
+  }
+
+  .people {
+    padding-top: 15px;
+    padding-left: 15px;
+  }
+  .people .box {
+    width: $yt-brick-weight - 15px;
+    height: $yt-brick-weight -  15px;
+    /* border: none; */
+
+    /*
+    &:nth-child(2),
+    &:nth-child(4) {
+      border-right: none;
+    }
+    */
+
+    &:nth-child(1),
+    &:nth-child(2) {
+      border-top: $border-width solid white;
+    }
+
+    &:nth-child(3),
+    &:nth-child(4) {
+      border-bottom: $border-width solid white;
+    }
+
+    &:empty:after {
+      width: $yt-brick-weight * 1.412;
+    }
+
+    .fullName {
+      font-size: $font-size * 1.3;
+      line-height: $font-size * 1.4;
+      padding-top: 10px;
+      padding-bottom: 10px;
+    }
+
+    .frame {
+      width: $yt-brick-weight;
+      height: $yt-brick-weight;
+
+      img {
+        width: $yt-brick-weight + 2px;
+        height: $yt-brick-weight+ 2px;
       }
     }
   }

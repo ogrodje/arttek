@@ -42,8 +42,13 @@ object Renderer:
         .via(ZPipeline.utfDecode >>> ZPipeline.splitLines)
         .runFold("")(_ + _)
       compiler <- ZIO.succeed(SASSCompiler())
+      options  <- ZIO.succeed {
+        val options = new Options
+        options.setOutputStyle(OutputStyle.COMPRESSED)
+        options
+      }
       css      <- ZIO.attempt(
-        compiler.compileString(raw, new Options()).getCss
+        compiler.compileString(raw, options).getCss
       )
     yield Response(
       status = Status.Ok,
