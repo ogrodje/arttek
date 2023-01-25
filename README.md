@@ -24,7 +24,7 @@ java -jar target/*/arttek.jar --help
 ## Dependencies
 
 - The project depends on [ffmpeg](https://ffmpeg.org/) for for composing audio/video files.
-- [wkhtmltopdf](https://wkhtmltopdf.org/) is used for generating PNG out of HTML files.
+- [wkhtmltopdf](https://wkhtmltopdf.org/) (`wkhtmltoimage`) is used for generation of PNGs out of HTML files.
 
 
 ## Ogrodje specific
