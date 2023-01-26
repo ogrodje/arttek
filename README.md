@@ -19,13 +19,29 @@ sbt assembly
 java -jar target/*/arttek.jar --help
 ```
 
+```
+arttek art builder v0.0.1 -- Generates images and video for your podcast
+
+USAGE
+
+  $ arttek <command>
+
+COMMANDS
+
+  - dev-server [--port text]
+  - render-overlay <code> <output-folder>
+  - render-youtube-thumbnail <code> <output-folder>
+  - render-podcast-thumbnail <code> <output-folder>
+  - render-podcast-thumbnails [--codes text] <output-folder>
+```
+
 [hygraph]: https://hygraph.com/
 
 ## Dependencies
 
-- The project depends on [ffmpeg](https://ffmpeg.org/) for for composing audio/video files.
+- The project depends on [ffmpeg](https://ffmpeg.org/) for composing audio/video files.
 - [wkhtmltopdf](https://wkhtmltopdf.org/) (`wkhtmltoimage`) is used for generation of PNGs out of HTML files.
-
+- [pngquant](https://pngquant.org/) is used for (size) optimisation of PNG images.
 
 ## Ogrodje specific
 

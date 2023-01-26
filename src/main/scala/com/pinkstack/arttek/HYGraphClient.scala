@@ -20,10 +20,7 @@ trait HYGraphClient:
       hygraphConfig <- service[AppConfig].map(_.hygraph)
       query         <- succeed(
         jsonFromFields(
-          Seq(
-            "query"     -> jsonFromString(rawQuery),
-            "variables" -> jsonFromFields(variables)
-          )
+          Seq("query" -> jsonFromString(rawQuery), "variables" -> jsonFromFields(variables))
         ).toString
       )
       body          <- Client

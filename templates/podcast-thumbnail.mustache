@@ -1,28 +1,15 @@
 <html lang="sl">
 <head>
     <meta charset="utf-8">
-    <title>Ogrodje</title>
+    <title>Ogrodje Podcast Thumbnail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{server}}/css/episode-video-2">
 </head>
-<body class="yt">
-{{#backgroundImageURL}}
-    <div class="container-x yt with-bg-image"
-         style="background-image: url('https://media.graphassets.com/output=format:jpg/resize=width:1280,height:720,fit:crop/{{backgroundImageURL}}')">
-{{/backgroundImageURL}}
-{{^backgroundImageURL}}
-    <div class="container-x yt">
-{{/backgroundImageURL}}
+<body class="yt podcast">
+<div class="container-x yt podcast">
     <div class="row">
-        <div class="col left">
-            <div class="master">
-                <div class="logo">
-                    <img src="{{server}}/raw/ogrodje-white-logo.png"/>
-                </div>
-                <div class="title">{{ episode.name }}</div>
-            </div>
-        </div>
         <div class="col right">
+            <div class="center-logo"><img src="{{server}}/raw/ogrodje-white-logo.png"/></div>
             <div class="people">
                 {{#people}}
                     {{#has}}

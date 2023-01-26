@@ -7,7 +7,7 @@ lazy val root = (project in file("."))
   .settings(
     name                             := "arttek",
     libraryDependencies ++= {
-      zio ++ httpClient ++ circe ++ mustache ++ markdown ++ sass
+      zio ++ httpClient ++ logging ++ circe ++ mustache ++ markdown ++ sass
     },
     mainClass                        := Some("com.pinkstack.arttek.ArttekApp"),
     Compile / packageBin / mainClass := Some("com.pinkstack.arttek.ArttekApp"),
@@ -31,3 +31,7 @@ lazy val root = (project in file("."))
         old(x)
     }
   )
+
+scalacOptions ++= Seq(
+  "-deprecation"
+)

@@ -19,6 +19,9 @@ object OgrodjeClient extends HYGraphClient:
             |    summary
             |    code
             |    airedAt
+            |    backgroundImage {
+            |      url
+            |    }
             |    host {
             |      fullName
             |      avatar {
@@ -53,6 +56,9 @@ object OgrodjeClient extends HYGraphClient:
         |    summary
         |    code
         |    airedAt
+        |    backgroundImage {
+        |      url
+        |    }
         |    host {
         |      fullName
         |      avatar {
@@ -83,7 +89,16 @@ object OgrodjeClient extends HYGraphClient:
   object HasPerson:
     val empty: HasPerson = HasPerson(PersonWithPicture(SERDE.Person("none", Avatar.apply("none"))), false)
 
-  def getEpisode(code: String): ZIO[AppConfig & Client, Throwable, (Episode, String, Array[HasPerson])] =
+  case class EpisodeWithDetails(
+    episode: Episode,
+    summary: String,
+    people: Array[HasPerson],
+    backgroundImageURL: String
+  )
+
+  private val fetchImageID: String => String = _.split("/").last
+
+  def getEpisode(code: String): ZIO[AppConfig & Client, Throwable, EpisodeWithDetails] =
     for
       episode        <- episode(code)
         .flatMap(j => fromOption(j.hcursor.downField("episode").focus))
@@ -106,11 +121,16 @@ object OgrodjeClient extends HYGraphClient:
         (Array(HasPerson(PersonWithPicture(episode.host))) ++ Array.fill(preGap)(HasPerson.empty) ++ guests ++
           Array.fill(postGap)(HasPerson.empty)).map {
           case hp @ HasPerson(pp, true) =>
-            hp.copy(person = pp.copy(picture = pp.person.avatar.url.split("/").last))
+            hp.copy(person = pp.copy(picture = fetchImageID(pp.person.avatar.url)))
           case p                        => p
         }
       }
-    yield (episode, episodeSummary, people)
+    yield EpisodeWithDetails(
+      episode,
+      episodeSummary,
+      people,
+      episode.backgroundImage.map(image => fetchImageID(image.url)).getOrElse("")
+    )
 
   def getEpisodes: ZIO[AppConfig & Client, Throwable, Array[Episode]] =
     episodes

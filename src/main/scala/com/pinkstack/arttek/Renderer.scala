@@ -9,47 +9,52 @@ import zio.http.{Body, Client, Http, HttpApp, Request, Response, URL, *}
 import zio.http.model.*
 import zio.stream.{ZPipeline, ZStream}
 import zio.{Task, ZIO}
+import ZIO.{attempt, logDebug, logInfo, succeed}
 
 import java.io.StringWriter
 import java.nio.file.Paths
 import scala.jdk.CollectionConverters.*
 
 object Renderer:
-  def renderMustache[K, V](templateName: String, data: (K, V)*): Task[Response] =
+  def renderMustache[K <: String, V](templateName: String, data: (K, V)*): ZIO[AppConfig, Throwable, Response] =
     for
-      path     <- ZIO.succeed(Paths.get(s"./templates"))
-      mustache <- ZIO.succeed(new DefaultMustacheFactory(path.toFile).compile(templateName))
-      sw       <- ZIO.succeed(new StringWriter())
-      _        <- ZIO.succeed(
+      path     <- succeed(Paths.get(s"./templates"))
+      mustache <- attempt(new DefaultMustacheFactory(path.toFile).compile(templateName))
+      sw       <- succeed(new StringWriter())
+      _        <- attempt(
         mustache.execute(
           sw,
           data.toMap.asJava
         )
-      ) *> ZIO.succeed(sw.close())
+      ) *> succeed(sw.close())
+      _        <- logInfo(s"Successfully rendered mustache: $templateName")
     yield Response.html(sw.toString)
 
-  def renderMarkdown(raw: String): Task[String] =
+  def renderMarkdown(raw: String): ZIO[AppConfig, Throwable, String] =
     for
-      parser   <- ZIO.succeed(Parser.builder().build())
-      document <- ZIO.succeed(parser.parse(raw))
-      renderer <- ZIO.succeed(HtmlRenderer.builder().build())
+      parser   <- succeed(Parser.builder().build())
+      document <- succeed(parser.parse(raw))
+      renderer <- succeed(HtmlRenderer.builder().build())
     yield renderer.render(document)
 
-  def renderSASS(fileName: String): Task[Response] =
+  def renderSASS(fileName: String): ZIO[AppConfig, Throwable, Response] =
     for
-      raw      <- ZStream
-        .fromPath(Paths.get("sass", fileName + ".scss"))
-        .via(ZPipeline.utfDecode >>> ZPipeline.splitLines)
-        .runFold("")(_ + _)
-      compiler <- ZIO.succeed(SASSCompiler())
-      options  <- ZIO.succeed {
+      fullPath <- succeed(Paths.get("sass", fileName + ".scss"))
+      compiler <- succeed(SASSCompiler())
+      options  <- succeed {
         val options = new Options
         options.setOutputStyle(OutputStyle.COMPRESSED)
         options
       }
-      css      <- ZIO.attempt(
-        compiler.compileString(raw, options).getCss
+
+      tempFile <- succeed(java.io.File.createTempFile("arttek", ".css"))
+      css      <- attempt(
+        compiler.compileFile(fullPath.toUri, tempFile.toURI, options).getCss
+      ).ensuring(
+        logDebug(s"Deleting temp file: ${tempFile.toPath.toAbsolutePath}") *>
+          attempt(tempFile.delete()).orDie
       )
+      _        <- logInfo(s"Successfully rendered SASS: $fullPath")
     yield Response(
       status = Status.Ok,
       body = Body.fromString(css),

@@ -19,6 +19,8 @@ tmp/*
 overlays/*
 !overlays/.keep
 
+outputs/*
+!outputs/.keep
 
 target/
 !.mvn/wrapper/maven-wrapper.jar
