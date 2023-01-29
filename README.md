@@ -31,6 +31,7 @@ COMMANDS
   - dev-server [--port text]
   - render-overlay <code> <output-folder>
   - render-youtube-thumbnail <code> <output-folder>
+  - render-youtube-thumbnails [--codes text] <output-folder>
   - render-podcast-thumbnail <code> <output-folder>
   - render-podcast-thumbnails [--codes text] <output-folder>
 ```

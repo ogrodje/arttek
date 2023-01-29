@@ -20,6 +20,7 @@ object Subcommand:
   final case class RenderPodcastThumbnail(code: Code, outputFolder: Path)                        extends Subcommand
   final case class RenderOverlay(code: Code, outputFolder: Path)                                 extends Subcommand
   final case class RenderPodcastThumbnails(outputFolder: Path, codes: Array[Code] = Array.empty) extends Subcommand
+  final case class RenderYouTubeThumbnails(outputFolder: Path, codes: Array[Code] = Array.empty) extends Subcommand
   final case class DevServer(port: Int)                                                          extends Subcommand
 
 object ArttekApp extends ZIOCliDefault:
@@ -39,14 +40,22 @@ object ArttekApp extends ZIOCliDefault:
     Command("render-podcast-thumbnail", Args.text("code") ++ Args.path("output-folder"))
       .map(RenderPodcastThumbnail.apply)
 
+  private val parseCodes: String => Array[String] =
+    _.split(",").map(_.trim).filterNot(_.isEmpty)
+
   val renderPodcastThumbnails =
     Command(
       "render-podcast-thumbnails",
       Options.text("codes").withDefault(""),
       Args.path("output-folder")
-    ).map { case (rawCodes, path) =>
-      RenderPodcastThumbnails.apply(path, rawCodes.split(",").filterNot(_.isEmpty))
-    }
+    ).map { case (rawCodes, path) => RenderPodcastThumbnails.apply(path, parseCodes(rawCodes)) }
+
+  val renderYouTubeThumbnails =
+    Command(
+      "render-youtube-thumbnails",
+      Options.text("codes").withDefault(""),
+      Args.path("output-folder")
+    ).map { case (rawCodes, path) => RenderYouTubeThumbnails.apply(path, parseCodes(rawCodes)) }
 
   val devServer = Command("dev-server", Options.text("port").withDefault("5555")).map { p =>
     DevServer.apply(
@@ -59,6 +68,7 @@ object ArttekApp extends ZIOCliDefault:
       devServer,
       renderOverlay,
       renderYouTubeThumbnail,
+      renderYouTubeThumbnails,
       renderPodcastThumbnail,
       renderPodcastThumbnails
     )
@@ -98,7 +108,7 @@ object ArttekApp extends ZIOCliDefault:
     command = app
   ) {
     case DevServer(port)                      =>
-      runWithServer(logInfo(s"Dev server booted on http://localhost:${port}") *> ZIO.unit.forever, Some(port))
+      runWithServer(logInfo(s"Dev server booted on http://localhost:$port") *> ZIO.unit.forever, Some(port))
     case RenderOverlay(code, path)            =>
       runWithServer {
         Actions.renderOverlay(code, path)
@@ -106,6 +116,10 @@ object ArttekApp extends ZIOCliDefault:
     case RenderYouTubeThumbnail(code, path)   =>
       runWithServer {
         Actions.renderYouTubeThumbnail(code, path)
+      }
+    case RenderYouTubeThumbnails(path, codes) =>
+      runWithServer {
+        Actions.renderYouTubeThumbnails(path, codes)
       }
     case RenderPodcastThumbnail(code, path)   =>
       runWithServer {

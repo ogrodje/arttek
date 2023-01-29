@@ -1,6 +1,6 @@
 package com.pinkstack.arttek
 import com.github.mustachejava.{DefaultMustacheFactory, Mustache, MustacheFactory}
-import com.pinkstack.arttek.OgrodjeClient.{EpisodeWithDetails, getEpisode, getEpisodes}
+import com.pinkstack.arttek.OgrodjeClient.{getEpisode, getEpisodes, EpisodeWithDetails}
 import io.circe.Json.{fromFields as jsonFromFields, fromString as jsonFromString}
 import io.circe.generic.semiauto.*
 import io.circe.*

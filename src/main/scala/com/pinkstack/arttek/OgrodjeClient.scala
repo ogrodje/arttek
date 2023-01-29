@@ -3,7 +3,7 @@ package com.pinkstack.arttek
 import com.pinkstack.arttek.SERDE.*
 import io.circe.Json.{fromFields as jsonFromFields, fromString as jsonFromString}
 import zio.ZIO
-import zio.ZIO.{fromEither, fromOption, succeed}
+import zio.ZIO.{attempt, fail, fromEither, fromOption, succeed}
 import zio.http.Client
 import zio.stream.{ZPipeline, ZSink, ZStream}
 
@@ -103,21 +103,19 @@ object OgrodjeClient extends HYGraphClient:
       episode        <- episode(code)
         .flatMap(j => fromOption(j.hcursor.downField("episode").focus))
         .flatMap(j => fromEither(j.as[SERDE.Episode]))
-        .catchAll(th => ZIO.fail(new RuntimeException(th.toString)))
+        .catchAll(th => fail(new RuntimeException(th.toString)))
       episodeSummary <- Renderer.renderMarkdown(episode.summary)
-      guests         <- ZIO.succeed {
-        (episode.guests ++ episode.cohosts).map(p => HasPerson(PersonWithPicture(p)))
-      }
-      preGap         <- ZIO.succeed {
+      guests         <- succeed((episode.guests ++ episode.cohosts).map(p => HasPerson(PersonWithPicture(p))))
+      preGap         <- succeed(
         Map(0 -> 3, 1 -> 1, 2 -> 1, 3 -> 0)
           .getOrElse(guests.length, throw new RuntimeException("Only works for <= 4."))
-      }
-      postGap        <- ZIO.succeed {
+      )
+      postGap        <- succeed(
         Map(0 -> 0, 1 -> 1, 2 -> 0, 3 -> 0)
           .getOrElse(guests.length, throw new RuntimeException("Only works for <= 4."))
-      }
+      )
 
-      people <- ZIO.succeed {
+      people <- succeed {
         (Array(HasPerson(PersonWithPicture(episode.host))) ++ Array.fill(preGap)(HasPerson.empty) ++ guests ++
           Array.fill(postGap)(HasPerson.empty)).map {
           case hp @ HasPerson(pp, true) =>
@@ -136,4 +134,4 @@ object OgrodjeClient extends HYGraphClient:
     episodes
       .flatMap(j => fromOption(j.hcursor.downField("episodes").focus))
       .flatMap(j => fromEither(j.as[Array[SERDE.Episode]]))
-      .catchAll(th => ZIO.fail(new RuntimeException(th.toString)))
+      .catchAll(th => fail(new RuntimeException(th.toString)))

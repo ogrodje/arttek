@@ -118,3 +118,19 @@ object Actions:
         .mapZIOParUnordered(3)(code => renderPodcastThumbnail(code, outputFolder))
         .runDrain
     ) *> succeed(outputFolder)
+
+  def renderYouTubeThumbnails(
+    outputFolder: Path,
+    rawCodes: Array[Code]
+  ): ZIO[AppConfig & Client, Throwable, Path] =
+    def getCodes: ZIO[AppConfig & Client, Throwable, Array[Code]] =
+      if rawCodes.isEmpty then OgrodjeClient.getEpisodes.map(_.map(_.code))
+      else succeed(rawCodes)
+
+    getCodes.flatMap(codes =>
+      ZStream
+        .fromIterable(codes)
+        .tap(code => printLine(code))
+        .mapZIOParUnordered(3)(code => renderYouTubeThumbnail(code, outputFolder))
+        .runDrain
+    ) *> succeed(outputFolder)
