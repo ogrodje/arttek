@@ -9,7 +9,6 @@ lazy val root = (project in file("."))
     libraryDependencies ++= {
       zio ++ httpClient ++ logging ++ circe ++ mustache ++ markdown ++ sass
     },
-    mainClass                        := Some("com.pinkstack.arttek.ArttekApp"),
     Compile / packageBin / mainClass := Some("com.pinkstack.arttek.ArttekApp"),
     Compile / run / mainClass        := Some("com.pinkstack.arttek.ArttekApp")
   )
