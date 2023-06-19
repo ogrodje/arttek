@@ -4,6 +4,20 @@
     <title>Ogrodje Podcast Thumbnail</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" type="text/css" href="{{server}}/css/episode-video-2">
+    {{#showColor}}
+        <!-- Non-default episode color -->
+        <style>
+            .people .box .fullName {
+                background-color: {{showColor}} !important;
+            }
+
+            .people .box,
+            .yt .row,
+            .people .box:empty:after {
+                border-color: {{showColor}};
+            }
+        </style>
+    {{/showColor}}
 </head>
 <body class="yt podcast">
 <div class="container-x yt podcast">
@@ -15,7 +29,9 @@
                     {{#has}}
                         <div class="box">
                             <div class="frame"><img
-                                    src="https://media.graphassets.com/output=format:jpg/resize=width:800,height:800,fit:crop/{{person.picture}}"/>
+                                    src="https://media.graphassets.com/output=format:jpg/resize=width:800,height:800,fit:crop/{{person.picture}}"
+                                    alt="{{person.person.fullName}}"
+                                    title="{{person.person.fullName}}"/>
                             </div>
                             <div class="fullName">{{person.person.fullName}}</div>
                         </div>

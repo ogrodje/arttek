@@ -43,7 +43,9 @@ object ServerApp extends ZIOAppDefault:
               "episode"            -> details.episode,
               "episodeSummary"     -> details.summary,
               "people"             -> details.people,
-              "backgroundImageURL" -> details.backgroundImageURL
+              "backgroundImageURL" -> details.backgroundImageURL,
+              "showName"           -> details.showName,
+              "showColor"          -> details.showColor
             )
           }.catchAll(th => succeed(Response.text(th.getMessage)))
         } yield response

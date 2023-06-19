@@ -24,6 +24,8 @@ object SERDE:
   implicit val topicDecoder: Decoder[Topic] = deriveDecoder[Topic]
   implicit val topicEncoder: Encoder[Topic] = deriveEncoder[Topic]
 
+  final case class Show(name: String, color: String)
+
   final case class Episode(
     name: String,
     summary: String,
@@ -33,7 +35,10 @@ object SERDE:
     host: Person,
     cohosts: Array[Person],
     guests: Array[Person],
-    backgroundImage: Option[BackgroundImage] = None
+    backgroundImage: Option[BackgroundImage] = None,
+    show: Option[Show] = None
   )
   implicit val episodeDecoder: Decoder[Episode] = deriveDecoder[Episode]
   implicit val episodeEncoder: Encoder[Episode] = deriveEncoder[Episode]
+  implicit val showDecoder: Decoder[Show]       = deriveDecoder[Show]
+  implicit val showEncoder: Encoder[Show]       = deriveEncoder[Show]

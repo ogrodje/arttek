@@ -77,6 +77,10 @@ object OgrodjeClient extends HYGraphClient:
         |        url
         |      }
         |    }
+        |    show {
+        |     name
+        |     color
+        |    }
         |  }
         |}
         |""".stripMargin,
@@ -93,7 +97,9 @@ object OgrodjeClient extends HYGraphClient:
     episode: Episode,
     summary: String,
     people: Array[HasPerson],
-    backgroundImageURL: String
+    backgroundImageURL: String,
+    showName: String = "",
+    showColor: String = ""
   )
 
   private val fetchImageID: String => String = _.split("/").last
@@ -127,7 +133,9 @@ object OgrodjeClient extends HYGraphClient:
       episode,
       episodeSummary,
       people,
-      episode.backgroundImage.map(image => fetchImageID(image.url)).getOrElse("")
+      episode.backgroundImage.map(image => fetchImageID(image.url)).getOrElse(""),
+      episode.show.map(_.name).getOrElse(""),
+      episode.show.map(_.color).getOrElse("")
     )
 
   def getEpisodes: ZIO[AppConfig & Client, Throwable, Array[Episode]] =
