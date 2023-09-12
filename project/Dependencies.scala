@@ -10,7 +10,7 @@ object Dependencies {
   }
 
   lazy val logging: Modules = Seq(
-    "ch.qos.logback" % "logback-classic" % "1.4.5"
+    "ch.qos.logback" % "logback-classic" % "1.4.7"
     // "dev.zio"       %% "zio-logging-jpl" % "2.1.5"
   ) ++ Seq(
     "dev.zio" %% "zio-logging",
@@ -28,7 +28,7 @@ object Dependencies {
     "dev.zio" %% "zio-cli"  % "0.2.8",
     "dev.zio" %% "zio-http" % "0.0.3"
   ) ++ Seq(
-    "dev.zio" %% "zio-cli"  % "0.3.0-M02"
+    "dev.zio" %% "zio-cli" % "0.3.0-M02"
   )
 
   lazy val circe: Modules = Seq(
@@ -42,7 +42,7 @@ object Dependencies {
   )
 
   lazy val liquid: Modules = Seq(
-    "nl.big-o" % "liqp" % "0.8.3.3"
+    "nl.big-o" % "liqp" % "0.8.5.3"
   )
 
   lazy val mustache: Modules = Seq(
@@ -56,10 +56,6 @@ object Dependencies {
 
   lazy val sass: Modules = Seq(
     "io.bit3" % "jsass" % "5.10.5"
-  )
-
-  lazy val libOs: Modules = Seq(
-    "com.lihaoyi" %% "os-lib" % "0.8.1"
   )
 
   lazy val httpClient: Modules = Seq(

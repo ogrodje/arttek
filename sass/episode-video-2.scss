@@ -294,8 +294,8 @@ html, body {
 
          */
 
-        font-size: 34pt ! important;
-        font-size: 32pt ! important;
+        font-size: 34pt !important;
+        font-size: 32pt !important;
 
         line-height: $font-size * 1.4;
         padding-top: 6px;
@@ -326,3 +326,9 @@ html, body {
   border-color: deeppink;
 }
 */
+
+.yt .row .people .fullName {
+  font-size: 28pt !important;
+  line-height: 30pt !important;
+  color: white;
+}
