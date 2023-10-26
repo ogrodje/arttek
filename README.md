@@ -55,7 +55,7 @@ docker run -ti -p 4444:4444 --rm \
 ## Dependencies
 
 - The project depends on [ffmpeg](https://ffmpeg.org/) for composing audio/video files.
-- The project depends on [sassc]([https://ffmpeg.org/](https://github.com/sass/sassc)) for SASS to CSS rendering.
+- The project depends on [sassc](https://github.com/sass/sassc) for SASS to CSS rendering.
 - [wkhtmltopdf](https://wkhtmltopdf.org/) (`wkhtmltoimage`) is used for the generation of PNGs out of HTML files.
 - [pngquant](https://pngquant.org/) is used for (size) optimisation of PNG images.
 
