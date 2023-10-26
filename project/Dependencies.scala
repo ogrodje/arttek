@@ -10,8 +10,7 @@ object Dependencies {
   }
 
   lazy val logging: Modules = Seq(
-    "ch.qos.logback" % "logback-classic" % "1.4.7"
-    // "dev.zio"       %% "zio-logging-jpl" % "2.1.5"
+    "ch.qos.logback" % "logback-classic" % "1.4.11"
   ) ++ Seq(
     "dev.zio" %% "zio-logging",
     "dev.zio" %% "zio-logging-slf4j"
@@ -48,7 +47,7 @@ object Dependencies {
   lazy val mustache: Modules = Seq(
     "com.github.spullara.mustache.java" % "mustache.java",
     "com.github.spullara.mustache.java" % "compiler"
-  ).map(_ % "0.9.10")
+  ).map(_ % "0.9.11")
 
   lazy val markdown: Modules = Seq(
     "org.commonmark" % "commonmark" % "0.21.0"
@@ -62,7 +61,7 @@ object Dependencies {
     // "org.apache.httpcomponents.client5" % "httpclient5"     % "5.2",
     "org.apache.httpcomponents" % "httpclient"      % "4.5.14" exclude ("commons-logging", "commons-logging"),
     "org.apache.httpcomponents" % "httpasyncclient" % "4.1.5" exclude ("commons-logging", "commons-logging"),
-    "org.slf4j"                 % "jcl-over-slf4j"  % "2.0.6"
+    "org.slf4j"                 % "jcl-over-slf4j"  % "2.0.9"
   )
 
   lazy val projectResolvers: Seq[MavenRepository] = Seq(
