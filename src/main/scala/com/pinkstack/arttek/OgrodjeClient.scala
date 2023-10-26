@@ -11,7 +11,7 @@ object OgrodjeClient extends HYGraphClient:
   def episodes: QueryResponse[AppConfig & Client] =
     query("""
             |query LastEpisodes {
-            |  episodes(orderBy: airedAt_DESC) {
+            |  episodes(first: 10, orderBy: airedAt_DESC) {
             |    topics {
             |      name
             |    }
@@ -114,11 +114,13 @@ object OgrodjeClient extends HYGraphClient:
       guests         <- succeed((episode.guests ++ episode.cohosts).map(p => HasPerson(PersonWithPicture(p))))
       preGap         <- succeed(
         Map(0 -> 3, 1 -> 1, 2 -> 1, 3 -> 0)
-          .getOrElse(guests.length, throw new RuntimeException("Only works for <= 4."))
+          .getOrElse(guests.length, 0)
+          // .getOrElse(guests.length, throw new RuntimeException("Only works for <= 4."))
       )
       postGap        <- succeed(
         Map(0 -> 0, 1 -> 1, 2 -> 0, 3 -> 0)
-          .getOrElse(guests.length, throw new RuntimeException("Only works for <= 4."))
+          .getOrElse(guests.length, 0)
+          // .getOrElse(guests.length, throw new RuntimeException("Only works for <= 4."))
       )
 
       people <- succeed {

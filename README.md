@@ -36,6 +36,20 @@ COMMANDS
   - render-podcast-thumbnails [--codes text] <output-folder>
 ```
 
+## Usage with Docker (experimental)
+
+```bash
+sbt assembly docker:publishLocal
+```
+
+```bash
+docker run -ti -p 4444:4444 --rm \
+  -e HYGRAPH_ENDPOINT=${HYGRAPH_ENDPOINT} \
+  -e HYGRAPH_TOKEN=${HYGRAPH_TOKEN} \
+  -v $(pwd)/outputs-xxx:/tmp/outputs-xxx \
+  ghcr.io/ogrodje/arttek render-podcast-thumbnails /tmp/outputs-xxx
+```
+
 [hygraph]: https://hygraph.com/
 
 ## Dependencies

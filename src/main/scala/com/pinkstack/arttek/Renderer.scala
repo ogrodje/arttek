@@ -8,8 +8,9 @@ import io.bit3.jsass.{CompilationException, Compiler as SASSCompiler, Options, O
 import zio.http.{Body, Client, Http, HttpApp, Request, Response, URL, *}
 import zio.http.model.*
 import zio.stream.{ZPipeline, ZStream}
-import zio.{Task, ZIO}
-import ZIO.{attempt, logDebug, logInfo, succeed}
+import zio.*
+import ZIO.{attempt, logDebug, logError, logInfo, succeed}
+import zio.process.Command
 
 import java.io.StringWriter
 import java.nio.file.Paths
@@ -37,7 +38,8 @@ object Renderer:
       renderer <- succeed(HtmlRenderer.builder().build())
     yield renderer.render(document)
 
-  def renderSASS(fileName: String): ZIO[AppConfig, Throwable, Response] =
+  @deprecated("Use new lib")
+  private def oldRenderSASS(fileName: String): ZIO[AppConfig, Throwable, Response] =
     for
       fullPath <- succeed(Paths.get("sass", fileName + ".scss"))
       compiler <- succeed(SASSCompiler())
@@ -60,3 +62,27 @@ object Renderer:
       body = Body.fromString(css),
       headers = Headers(HeaderNames.contentType, HeaderValues.textCss)
     )
+
+  private def renderSASS2(fileName: String): ZIO[AppConfig, Throwable, Response] =
+    for
+      inputPath  <- succeed(Paths.get("sass", fileName + ".scss"))
+      outputFile <- succeed(java.io.File.createTempFile("arttek", ".css"))
+      args = s"-t compressed ${inputPath.toAbsolutePath} ${outputFile.toPath.toAbsolutePath}".split(" ")
+      _ <- Command("sassc", args: _*).string
+      _ <- logInfo(s"[renderSASS2] Output: ${outputFile.toPath.toAbsolutePath}")
+    yield Response(
+      status = Status.Ok,
+      body = Body.fromStream(ZStream.fromFile(outputFile)),
+      headers = Headers(HeaderNames.contentType, HeaderValues.textCss)
+    )
+
+  def renderSASS(filename: String): ZIO[AppConfig, Throwable, Response] =
+    renderSASS2(filename).catchAll { th =>
+      logError(th.getMessage) *>
+        ZIO.succeed(
+          Response(
+            status = Status.InternalServerError,
+            body = Body.fromString(s"Failed with - ${th.getMessage}")
+          )
+        )
+    }

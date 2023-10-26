@@ -12,6 +12,7 @@ import zio.http.ServerConfig.LeakDetectionLevel
 import zio.http.{Client, Server, ServerConfig}
 import zio.logging.backend.SLF4J
 import zio.logging.{console, LogFormat}
+import zio.process.Command
 import zio.stream.{ZPipeline, ZSink, ZStream}
 
 import java.nio.file.{Files, Path, Paths}
@@ -22,10 +23,12 @@ object Actions:
 
   private def download(url: String, output: Path): ActionOnPath =
     for
-      _           <- logInfo(s"Download starting: ${url}")
-      wgetCommand <- succeed(s"wget ${url} --no-verbose -O ${output}")
-      wgetF       <- attempt(wgetCommand.!!).fork
-      out         <- wgetF.join *> logInfo(s"Download completed: ${url} to ${output.toAbsolutePath}") *> succeed(output)
+      _           <- logInfo(s"Download starting: $url")
+      wgetCommand <- Command(s"wget", url, "--no-verbose", "-O", output.toAbsolutePath.toString).linesStream
+        .foreach(p => Console.printLine("wget -> ", p))
+        .fork
+      out         <- wgetCommand.join *>
+        logInfo(s"Download completed: ${url} to ${output.toAbsolutePath}") *> succeed(output)
     yield out
 
   private def htmlToImage(
@@ -34,13 +37,16 @@ object Actions:
     params: (String, String)*
   ): ActionOnPath =
     for
-      params     <- succeed(params.map {
+      params <- succeed(params.map {
         case (k, v) if v.nonEmpty => s"$k $v"
         case (k, _)               => s"$k"
       }.mkString(" ").strip)
-      wkCommand  <- succeed(s"wkhtmltoimage ${params} ${inputPath} ${outputPath}")
-      _          <- logInfo(s"Running command: ${wkCommand}")
-      commandFib <- attempt(wkCommand.!!).fork
+
+      args = params.split(" ") ++ Seq(inputPath.toAbsolutePath.toString, outputPath.toAbsolutePath.toString)
+      _          <- logInfo(s"Running command: wkhtmltoimage ${args.mkString(" ")}")
+      commandFib <- Command("wkhtmltoimage", args: _*).linesStream
+        .foreach(p => Console.printLine(p))
+        .fork
       out <- commandFib.join *> logInfo(s"Image generated at ${outputPath.toAbsolutePath}") *> succeed(outputPath)
     yield out
 
@@ -115,7 +121,7 @@ object Actions:
       ZStream
         .fromIterable(codes)
         .tap(code => printLine(code))
-        .mapZIOParUnordered(3)(code => renderPodcastThumbnail(code, outputFolder))
+        .mapZIO(code => renderPodcastThumbnail(code, outputFolder))
         .runDrain
     ) *> succeed(outputFolder)
 
@@ -131,6 +137,6 @@ object Actions:
       ZStream
         .fromIterable(codes)
         .tap(code => printLine(code))
-        .mapZIOParUnordered(3)(code => renderYouTubeThumbnail(code, outputFolder))
+        .mapZIO(code => renderYouTubeThumbnail(code, outputFolder))
         .runDrain
     ) *> succeed(outputFolder)

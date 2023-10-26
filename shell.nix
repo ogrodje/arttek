@@ -7,6 +7,7 @@ mkShell {
     wkhtmltopdf-bin
     pngquant
     wget
+    sassc
  ];
   shellHook = ''
     export ARTTEK_HOME=`pwd`

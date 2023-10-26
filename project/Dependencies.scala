@@ -22,12 +22,14 @@ object Dependencies {
     "dev.zio" %% "zio-test-sbt",
     "dev.zio" %% "zio-streams",
     "dev.zio" %% "zio-test-junit",
-    "dev.zio" %% "zio-macros"
+    "dev.zio" %% "zio-macros",
   ).map(_ % Versions.zio) ++ Seq(
     "dev.zio" %% "zio-cli"  % "0.2.8",
     "dev.zio" %% "zio-http" % "0.0.3"
   ) ++ Seq(
     "dev.zio" %% "zio-cli" % "0.3.0-M02"
+  ) ++ Seq(
+    "dev.zio" %% "zio-process" % "0.7.1"
   )
 
   lazy val circe: Modules = Seq(
