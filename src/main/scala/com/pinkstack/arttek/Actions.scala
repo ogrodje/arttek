@@ -120,7 +120,7 @@ object Actions:
     getCodes.flatMap(codes =>
       ZStream
         .fromIterable(codes)
-        .tap(code => printLine(code))
+        .tap(code => logInfo(s"Processing code: $code"))
         .mapZIO(code => renderPodcastThumbnail(code, outputFolder))
         .runDrain
     ) *> succeed(outputFolder)
@@ -136,7 +136,7 @@ object Actions:
     getCodes.flatMap(codes =>
       ZStream
         .fromIterable(codes)
-        .tap(code => printLine(code))
+        .tap(code => logInfo(s"Processing code: $code"))
         .mapZIO(code => renderYouTubeThumbnail(code, outputFolder))
         .runDrain
     ) *> succeed(outputFolder)
