@@ -3,8 +3,6 @@ import com.pinkstack.arttek.OgrodjeClient.{getEpisode, getEpisodes}
 import io.circe.*
 import zio.ZIO.{logError, logErrorCause, logInfo, service, succeed}
 import zio.http.*
-import zio.http.ServerConfig.LeakDetectionLevel
-import zio.http.model.{Method, Status}
 import zio.logging.backend.SLF4J
 import zio.stream.ZStream
 import zio.{UIO, ZIO, *}
@@ -16,7 +14,8 @@ object ServerApp extends ZIOAppDefault:
 
   override val bootstrap: ZLayer[ZIOAppArgs, Any, Any] = Runtime.removeDefaultLoggers >>> SLF4J.slf4j
 
-  val app: HttpApp[AppConfig & Client, Throwable] = Http.collectHttp[Request] { case Method.GET -> !! / "raw" / name =>
+  /*
+  val appX: HttpApp[AppConfig & Client, Throwable] = Http.collectHttp[Request] { case Method.GET -> !! / "raw" / name =>
     Http.fromStream(ZStream.fromFile(Paths.get("./raw/ogrodje-white-logo.png").toFile))
   } ++ Http.collectZIO[Request] {
     case Method.GET -> !!                                =>
@@ -38,8 +37,26 @@ object ServerApp extends ZIOAppDefault:
       getEpisodes.flatMap(episodes => Renderer.renderMustache("episodes.mustache", "episodes" -> episodes))
     case _                                               => succeed(Response.text("404").copy(status = Status.NotFound))
   }
+   */
 
-  private def renderGetEpisode(templateName: String, code: String): ZIO[AppConfig & Client, Throwable, Response] =
+  val app: HttpApp[AppConfig] = Routes(
+    Method.GET / "css" / string("fileName")                -> handler { (fileName: String, req: Request) =>
+      ZIO.succeed(println(s"path: ${fileName}")) *> Renderer
+        .renderSASS(fileName)
+        .catchAll(th => succeed(Response.text(th.getMessage)))
+    },
+    Method.GET / string(templateName) / "x" / string(code) -> handler {
+      (templateName: String, code: String, rew: Request) =>
+        ZIO.succeed(Response.text(s"ok ${templateName}"))
+    }
+    // _ ->
+    //  handler(ZIO.succeed(Response.text("Hello World (redirect)")))
+  ).toHttpApp
+
+  private def renderGetEpisode(
+    templateName: String,
+    code: String
+  ): ZIO[Scope & AppConfig & Client, Throwable, Response] =
     for
       server <- ZIO.service[AppConfig].map(_.server)
       out    <- getEpisode(code).flatMap { details =>
@@ -59,6 +76,19 @@ object ServerApp extends ZIOAppDefault:
   def run: ZIO[zio.Scope, Throwable, Unit] =
     for
       config <- AppConfig.load.map(_.copy(port = 5555))
+      _      <- ZIO.succeed(s"Running with ${config}")
+
+    /*
+      _      <- Server
+        .serve(app)
+        .provide(
+          Scope.default,
+          Client.default,
+          ZLayer.fromZIO(succeed(config)),
+          Server.defaultWithPort(config.port)
+        )
+     */
+    /*
       _      <-
         (Server.install(app).flatMap(port => logInfo(s"Server booted on port ${port}")) *> ZIO.never)
           .provide(
@@ -71,5 +101,5 @@ object ServerApp extends ZIOAppDefault:
                 .leakDetection(LeakDetectionLevel.SIMPLE)
             ),
             Server.live
-          )
+          ) */
     yield ()

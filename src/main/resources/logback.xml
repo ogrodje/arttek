@@ -35,10 +35,10 @@
     </turboFilter>
     -->
 
-    <logger name="com.pinkstack" level="${PINKSTACK_LOG_LEVEL:-INFO}"/>
+    <logger name="com.pinkstack" level="${PINKSTACK_LOG_LEVEL:-DEBUG}"/>
     <logger name="org.apache.http" level="WARN"/>
 
-    <root level="INFO">
+    <root level="DEBUG">
         <appender-ref ref="STDOUT"/>
     </root>
 </configuration>

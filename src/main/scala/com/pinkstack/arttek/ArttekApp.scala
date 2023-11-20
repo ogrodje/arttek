@@ -7,8 +7,7 @@ import Console.printLine
 import zio.cli.*
 import zio.cli.HelpDoc.Span.text
 import zio.cli.figlet.FigFont
-import zio.http.ServerConfig.LeakDetectionLevel
-import zio.http.{Client, Server, ServerConfig}
+import zio.http.{Client, Server}
 import zio.logging.backend.SLF4J
 
 import java.nio.file.{Files, Path, Paths}
@@ -74,11 +73,12 @@ object ArttekApp extends ZIOCliDefault:
     )
 
   private def runWithServer[A](
-    work: ZIO[AppConfig & Client, Throwable, A],
+    work: ZIO[Scope & AppConfig & Client, Throwable, A],
     portOpt: Option[Int] = None
   ): ZIO[Any, Throwable, Unit] =
     val app = for {
-      serverFib <- Server.install(ServerApp.app).fork
+      // serverFib <- Server.install(ServerApp.app).fork
+      serverFib <- Server.serve(ServerApp.app).fork
       workFib   <- (work *> logInfo("Work done") *> serverFib.interrupt).fork
       _         <- serverFib.join
       _         <- workFib.join
@@ -92,12 +92,13 @@ object ArttekApp extends ZIOCliDefault:
             Client.default,
             Scope.default,
             ZLayer.fromZIO(succeed(config)),
+            /*
             ServerConfig.live(
               ServerConfig.default
                 .port(config.port)
                 .leakDetection(LeakDetectionLevel.DISABLED)
-            ),
-            Server.live
+            ), */
+            Server.defaultWithPort(config.port)
           )
       )
 

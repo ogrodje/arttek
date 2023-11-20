@@ -5,8 +5,7 @@ import org.commonmark.node.*
 import org.commonmark.parser.Parser
 import org.commonmark.renderer.html.HtmlRenderer
 import io.bit3.jsass.{CompilationException, Compiler as SASSCompiler, Options, Output, OutputStyle}
-import zio.http.{Body, Client, Http, HttpApp, Request, Response, URL, *}
-import zio.http.model.*
+import zio.http.*
 import zio.stream.{ZPipeline, ZStream}
 import zio.*
 import ZIO.{attempt, logDebug, logError, logInfo, succeed}
@@ -60,7 +59,7 @@ object Renderer:
     yield Response(
       status = Status.Ok,
       body = Body.fromString(css),
-      headers = Headers(HeaderNames.contentType, HeaderValues.textCss)
+      // headers = Headers(HeaderNames.contentType, HeaderValues.textCss)
     )
 
   private def renderSASS2(fileName: String): ZIO[AppConfig, Throwable, Response] =
@@ -73,7 +72,8 @@ object Renderer:
     yield Response(
       status = Status.Ok,
       body = Body.fromStream(ZStream.fromFile(outputFile)),
-      headers = Headers(HeaderNames.contentType, HeaderValues.textCss)
+      // TODO: Fix this
+      // headers = Headers(HeaderNames.contentType, HeaderValues.textCss)
     )
 
   def renderSASS(filename: String): ZIO[AppConfig, Throwable, Response] =

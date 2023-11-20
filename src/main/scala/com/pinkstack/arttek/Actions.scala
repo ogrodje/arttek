@@ -8,8 +8,7 @@ import zio.Console.printLine
 import zio.cli.*
 import zio.cli.HelpDoc.Span.text
 import zio.cli.figlet.FigFont
-import zio.http.ServerConfig.LeakDetectionLevel
-import zio.http.{Client, Server, ServerConfig}
+import zio.http.{Client, Server}
 import zio.logging.backend.SLF4J
 import zio.logging.{console, LogFormat}
 import zio.process.Command
@@ -112,8 +111,8 @@ object Actions:
   def renderPodcastThumbnails(
     outputFolder: Path,
     rawCodes: Array[Code]
-  ): ZIO[AppConfig & Client, Throwable, Path] =
-    def getCodes: ZIO[AppConfig & Client, Throwable, Array[Code]] =
+  ): ZIO[Client & Scope with AppConfig, Throwable, Path] =
+    def getCodes: ZIO[Client & Scope with AppConfig, Throwable, Array[Code]] =
       if rawCodes.isEmpty then OgrodjeClient.getEpisodes.map(_.map(_.code))
       else succeed(rawCodes)
 
@@ -128,8 +127,8 @@ object Actions:
   def renderYouTubeThumbnails(
     outputFolder: Path,
     rawCodes: Array[Code]
-  ): ZIO[AppConfig & Client, Throwable, Path] =
-    def getCodes: ZIO[AppConfig & Client, Throwable, Array[Code]] =
+  ): ZIO[Client & Scope with AppConfig, Throwable, Path] =
+    def getCodes: ZIO[Client & Scope with AppConfig, Throwable, Array[Code]] =
       if rawCodes.isEmpty then OgrodjeClient.getEpisodes.map(_.map(_.code))
       else succeed(rawCodes)
 

@@ -2,13 +2,13 @@ package com.pinkstack.arttek
 
 import com.pinkstack.arttek.SERDE.*
 import io.circe.Json.{fromFields as jsonFromFields, fromString as jsonFromString}
-import zio.ZIO
+import zio.{Scope, ZIO}
 import zio.ZIO.{attempt, fail, fromEither, fromOption, succeed}
 import zio.http.Client
 import zio.stream.{ZPipeline, ZSink, ZStream}
 
 object OgrodjeClient extends HYGraphClient:
-  def episodes: QueryResponse[AppConfig & Client] =
+  def episodes: QueryResponse[Client & Scope with AppConfig] =
     query("""
             |query LastEpisodes {
             |  episodes(first: 10, orderBy: airedAt_DESC) {
@@ -44,7 +44,7 @@ object OgrodjeClient extends HYGraphClient:
             |}
             |""".stripMargin)
 
-  def episode(code: String): QueryResponse[AppConfig & Client] =
+  def episode(code: String): QueryResponse[Client & Scope with AppConfig] =
     query(
       """
         |query GetEpisodeByCode($code: String!) {
@@ -104,7 +104,7 @@ object OgrodjeClient extends HYGraphClient:
 
   private val fetchImageID: String => String = _.split("/").last
 
-  def getEpisode(code: String): ZIO[AppConfig & Client, Throwable, EpisodeWithDetails] =
+  def getEpisode(code: String): ZIO[Client & Scope with AppConfig, Throwable, EpisodeWithDetails] =
     for
       episode        <- episode(code)
         .flatMap(j => fromOption(j.hcursor.downField("episode").focus))
@@ -140,7 +140,7 @@ object OgrodjeClient extends HYGraphClient:
       episode.show.map(_.color).getOrElse("")
     )
 
-  def getEpisodes: ZIO[AppConfig & Client, Throwable, Array[Episode]] =
+  def getEpisodes: ZIO[Client & Scope with AppConfig, Throwable, Array[Episode]] =
     episodes
       .flatMap(j => fromOption(j.hcursor.downField("episodes").focus))
       .flatMap(j => fromEither(j.as[Array[SERDE.Episode]]))

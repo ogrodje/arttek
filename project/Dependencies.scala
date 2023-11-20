@@ -5,8 +5,8 @@ object Dependencies {
   type Modules = Seq[ModuleID]
 
   object Versions {
-    val zio: Version        = "2.0.5"
-    val zioLogging: Version = "2.1.5"
+    val zio: Version        = "2.0.19"
+    val zioLogging: Version = "2.1.15"
   }
 
   lazy val logging: Modules = Seq(
@@ -25,11 +25,11 @@ object Dependencies {
     "dev.zio" %% "zio-macros",
   ).map(_ % Versions.zio) ++ Seq(
     "dev.zio" %% "zio-cli"  % "0.2.8",
-    "dev.zio" %% "zio-http" % "0.0.3"
+    "dev.zio" %% "zio-http" % "3.0.0-RC3"
   ) ++ Seq(
     "dev.zio" %% "zio-cli" % "0.3.0-M02"
   ) ++ Seq(
-    "dev.zio" %% "zio-process" % "0.7.1"
+    "dev.zio" %% "zio-process" % "0.7.2"
   )
 
   lazy val circe: Modules = Seq(
