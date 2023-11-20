@@ -55,14 +55,15 @@ docker run -ti -p 4444:4444 --rm \
 ## Dependencies
 
 - The project depends on [ffmpeg](https://ffmpeg.org/) for composing audio/video files.
-- [wkhtmltopdf](https://wkhtmltopdf.org/) (`wkhtmltoimage`) is used for generation of PNGs out of HTML files.
+- The project depends on [sassc](https://github.com/sass/sassc) for SASS to CSS rendering.
+- [wkhtmltopdf](https://wkhtmltopdf.org/) (`wkhtmltoimage`) is used for the generation of PNGs out of HTML files.
 - [pngquant](https://pngquant.org/) is used for (size) optimisation of PNG images.
 
 ## Ogrodje specific
 
 This project was designed to work with Ogrodje podcast and its specifics. Some of the things are hard-coded; 
-however with minimum support a lot of the things can be made more generic and reusable. 
-Good start is to look into [templates](templates/) and [sass](sass/) folders and start customisation there. 
+however, with minimum support, many things can be made more generic and reusable. 
+A good start is to look into [templates](templates/) and [sass](sass/) folders and start customisation there. 
 To change or optimise GraphQL queries look into [OgrodjeClient.scala](src/main/scala/com/pinkstack/arttek/OgrodjeClient.scala)
 
 
